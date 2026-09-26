@@ -36,10 +36,10 @@ def one_liner_gen(user_prompt: str):
                         ])
 
     one_liner = response["message"]["content"].strip()
-    USER_PROMPT = f"https://html.duckduckgo.com/html/?q={urllib.parse.quote_plus(one_liner)}"
+    USER_PROMPT = user_prompt
     return f"https://html.duckduckgo.com/html/?q={urllib.parse.quote_plus(one_liner)}"
 
-# function to take the URL, grab all the result-webaddresses it can find, return top 10 as list
+# function to take the URL, grab all the result-webaddresses it can find, crawl through each of the website that nearly matches the prompt we gave
 def top_urls(URL: str):
     try:
         Headers = {
@@ -72,6 +72,7 @@ def top_urls(URL: str):
 
 # The function where the worker AI, takes the url, scrapes for content and returns back a json
 def handle_url(URL: str):
+    global USER_PROMPT
     print(USER_PROMPT)
     raw_md_file = open("raw_md.md", "a")
     # fit_md_file = open("fit_md.md", "w")
@@ -84,19 +85,14 @@ def handle_url(URL: str):
         {
             "role": "system",
             "content": (
-                "Take the content & user_prompt from the user and give a json "
-                "formatted result of the content that you think is nearly relevant to "
-                "the User's prompt. format of json: "
-                "{{'place name': '<name of the place>', 'description': '<description of what activities can be done in the place>'}}"
+                "Take the content & user_prompt and return a summarised version of the results you found in under 3-4 lines."
+                f"URL content:\n{result.markdown}\nuser_prompt: {USER_PROMPT}"
             )
-        },
-        {
-            "role": "user",
-            "content": f"URL content:\n{result.markdown}\nuser_prompt: {USER_PROMPT}"
         }
     ])
-    with open("AI_results.md", "a") as results_file:
-        results_file.write(response["message"]["content"])
+
+    with open("AI_results.md", "a") as file:
+        file.write(response["message"]["content"])
     raw_md_file.close()
 
 async def crawl(URL: str):
@@ -106,11 +102,28 @@ async def crawl(URL: str):
     async with AsyncWebCrawler(config=browser_config) as crawler:
         result = await crawler.arun(URL, config=crawler_config)
     return result.markdown
-    
-# Need to make a function or object, whatever that can automatically crawl using the function from here
+
+# Just trying by taking all the content and pasting it here to be comporessed first
+def content_compressor():
+    result = ""
+    with open("raw_md.md", "r") as file:
+        response = ollama.chat(
+            model="llama3.2:1b",
+            messages=[
+                {
+                    "role":"system",
+                    "content":f"take this content and summarize it in under 2 nicely framed paragraphs.\n{file.read()}"
+                }
+            ],
+            options={
+                "num_ctx":81920
+            }
+            )
+        result = response["message"]["content"]
+    with open("AI_results.md", "a") as file:
+        file.write(result)
 
 if __name__ == "__main__":
-    one_liner = one_liner_gen("Fine dining restaurants in Rome")
+    one_liner = one_liner_gen("hot air balloon stations in UAE for weddings")
     print(one_liner)
-    links = top_urls(one_liner)
-    print(links)
+    top_urls(one_liner)

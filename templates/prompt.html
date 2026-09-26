@@ -26,14 +26,35 @@
               rows="3"
               placeholder="Type your prompt here..."
             ></textarea>
+            <button id="mic_button" type="button" class="mic-button" aria-label="Voice input" title="Voice input">
+              <span aria-hidden="true">🎤</span>
+            </button>
             <button type="submit" aria-label="Send prompt">Send</button>
           </form>
         </section>
 
         <aside class="details-panel" aria-label="Location details panel">
-          <div class="details-placeholder" id="details-placeholder">
-            Location details from APIs will appear here.
+          <div class="details-header">
+            <span class="details-kicker"></span>
+            <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" onclick="">
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </button>
           </div>
+
+          <div class="details-visual" id="details-placeholder">
+            <div class="planet-scene" id="planet-scene">
+              <div class="planet-glow"></div>
+              <div class="planet-orbit orbit-one"></div>
+              <div class="planet-orbit orbit-two"></div>
+
+              <div class="earth-wrap" aria-label="3D Earth">
+                <canvas id="earth-canvas" width="500" height="500" aria-label="Earth globe"></canvas>
+              </div>
+            </div>
+          </div>
+
           <div class="details-content" id="details-content" hidden></div>
         </aside>
       </main>

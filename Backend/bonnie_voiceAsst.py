@@ -12,18 +12,16 @@ def print_mic_interfaces() -> None:
 def speech_to_text_en(device_ind: int, lang="en-US"):
     r = sr.Recognizer()
     r.pause_threshold = 1
-
+    text = ""
     with sr.Microphone(device_index=device_ind) as source:
         r.adjust_for_ambient_noise(source, duration=2)
         print("start talking...")
         audio = r.listen(source)
         try:
-            text = r.recognize_google(audio, language=lang, )
-            print(f"You said: {text}")
+            text = r.recognize_google(audio, language=lang)
         except Exception as e:
             print(f"Please try again.\nException: {e}")
-
-# need to use this feature in order to actually get the user's prompt via speech
+    return text
 
 if __name__ == "__main__":
     speech_to_text_en(6)
