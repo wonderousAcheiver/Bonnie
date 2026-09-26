@@ -1,8 +1,6 @@
 # The name "Bonnie" is inspired by Bonnie from One piece anime, the chearfull girl, who had in my opinion
 # a beautiful & adventurous storyline dedicated just for her by the animators.
 
-# This AI is made to get the prompts the user is making using voice, by using livekit, which has the best
-# low latency speech to text and text to speech transcription.
 import speech_recognition as sr
 
 def print_mic_interfaces() -> None:
