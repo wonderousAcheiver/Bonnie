@@ -2,3 +2,5 @@ Flask
 crawl4ai
 ollama
 beautifulsoup4
+SpeechRecognition
+pyaudio

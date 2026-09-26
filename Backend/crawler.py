@@ -16,9 +16,6 @@ USER_PROMPT = ""
 with open("raw_md.md", "w") as file_raw:
     file_raw.write("")
 
-with open("fit_md.md", "w") as file_fit:
-    file_fit.write("")
-
 with open("AI_results.md", "w") as results_file:
     results_file.write("")
 
@@ -71,22 +68,17 @@ def top_urls(URL: str):
     # Doing multithreaded (3 workers here) to scrape the data of the website passed to the worker
     with ThreadPoolExecutor(max_workers=3) as workers:
         for link in links:
-            asyncio.run(workers.submit(handle_url, link))
+            workers.submit(handle_url, link)
 
 # The function where the worker AI, takes the url, scrapes for content and returns back a json
-async def handle_url(URL: str):
+def handle_url(URL: str):
     print(USER_PROMPT)
     raw_md_file = open("raw_md.md", "a")
     # fit_md_file = open("fit_md.md", "w")
 
-    result = ""
-    browser_config = BrowserConfig()
-    crawler_config = CrawlerRunConfig()
-    async with AsyncWebCrawler(config=browser_config) as crawler:
-        result = await crawler.arun(URL, config=crawler_config)
-        print(result.markdown)
-    raw_md_file.write(result.markdown)
-    response = await ollama.chat(
+    result = asyncio.run(crawl(URL))
+    raw_md_file.write(result)
+    response = ollama.chat(
     model="qwen2.5-coder:1.5b",
     messages=[
         {
@@ -107,7 +99,15 @@ async def handle_url(URL: str):
         results_file.write(response["message"]["content"])
     raw_md_file.close()
 
-
+async def crawl(URL: str):
+    result = ""
+    browser_config = BrowserConfig()
+    crawler_config = CrawlerRunConfig()
+    async with AsyncWebCrawler(config=browser_config) as crawler:
+        result = await crawler.arun(URL, config=crawler_config)
+    return result.markdown
+    
+# Need to make a function or object, whatever that can automatically crawl using the function from here
 
 if __name__ == "__main__":
     one_liner = one_liner_gen("Fine dining restaurants in Rome")
