@@ -1,0 +1,4 @@
+Flask
+crawl4ai
+ollama
+beautifulsoup4

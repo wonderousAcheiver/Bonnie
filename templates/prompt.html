@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompt Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/prompt.css') }}" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="workspace-layout" aria-label="Prompt interface">
+        <section class="chat-window" aria-label="Prompt panel">
+          <section class="output-panel" aria-label="AI output area">
+            <div class="output-placeholder">
+              Results and generated text will appear here.
+            </div>
+          </section>
+
+          <form id="prompt-section" class="prompt-bar" aria-label="Prompt form">
+            <label class="sr-only" for="prompt-input">Enter your prompt</label>
+            <textarea
+              id="prompt-input"
+              name="prompt"
+              rows="3"
+              placeholder="Type your prompt here..."
+            ></textarea>
+            <button type="submit" aria-label="Send prompt">Send</button>
+          </form>
+        </section>
+
+        <aside class="details-panel" aria-label="Location details panel">
+          <div class="details-placeholder">
+            Location details from APIs will appear here.
+          </div>
+        </aside>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/prompt.js') }}"></script>
+  </body>
+</html>
